@@ -1,8 +1,14 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import Banner from "../Components/Banner";
+import Header from "../Components/Header";
+import SmallCard from "../Components/SmallCard";
+import MediumCard from "../Components/MediumCard";
+import LargeCard from "../Components/LargeCard";
+import Footer from "../Components/Footer";
 
-export default function Home() {
+export default function Home({ exploreData, cardData }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -11,59 +17,65 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      {/* Header */}
+      <Header />
+      {/* Banner */}
+      <Banner />
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+      {/* Main area */}
+      <main className="max-w-6xl mx-auto px-8 sm:px-16">
+        <section className="pt-6">
+          <h2 className="text-4xl font-semibold pb-2">Explore Nearby</h2>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+          {/* Pull some data from server - API Endpoints */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {exploreData.map((item) => (
+              <SmallCard
+                key={item.img}
+                img={item.img}
+                distance={item.distance}
+                location={item.location}
+              />
+            ))}
+          </div>
+        </section>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+        <section>
+          <h2 className="text-4xl font-semibold py-8">Live anywhere</h2>
+          <div className="flex space-x-3 overflow-hidden overflow-x-auto scrollbar-hide p-3 -ml-3">
+            {cardData.map((item) => (
+              <MediumCard key={item.img} img={item.img} title={item.title} />
+            ))}
+          </div>
+        </section>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <LargeCard
+          img="https:links.papareact.com/4cj"
+          title="The Greatest Outdoors"
+          description="Wishlist curated by Airbnb"
+          buttonText="Get Inspired"
+        />
       </main>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+      {/* Footer Section */}
+      <Footer />
     </div>
-  )
+  );
+}
+
+export async function getStaticProps() {
+  const exploreData = await fetch("https://links.papareact.com/pyp").then(
+    (res) => res.json()
+  );
+
+  const cardData = await fetch("https://links.papareact.com/zp1").then((res) =>
+    res.json()
+  );
+
+  return {
+    props: {
+      exploreData,
+      cardData,
+    },
+  };
 }
